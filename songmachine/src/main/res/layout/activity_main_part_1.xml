@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RadioGroup
+            android:id="@+id/radio_group_left"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_weight="5"
+            android:orientation="horizontal"
+            tools:ignore="UselessParent">
+
+            <RadioButton
+                android:id="@+id/radio_left_1"
+                style="@style/RadioButton"
+                android:layout_height="wrap_content"
+                android:drawableTop="@drawable/ic_home_black"
+                android:text="@string/radio_button_left_1_text" />
+
+            <RadioButton
+                android:id="@+id/radio_left_2"
+                style="@style/RadioButton"
+                android:layout_height="wrap_content"
+                android:drawableTop="@drawable/ic_autorenew_black"
+                android:text="@string/radio_button_left_2_text" />
+
+            <RadioButton
+                android:id="@+id/radio_left_3"
+                style="@style/RadioButton"
+                android:layout_height="wrap_content"
+                android:drawableTop="@drawable/ic_volume_off_black"
+                android:text="@string/radio_button_left_3_text" />
+
+            <RadioButton
+                android:id="@+id/radio_left_4"
+                style="@style/RadioButton"
+                android:layout_height="wrap_content"
+                android:drawableTop="@drawable/ic_pause_circle_filled_black"
+                android:text="@string/radio_button_left_4_text" />
+
+            <RadioButton
+                android:id="@+id/radio_left_5"
+                style="@style/RadioButton"
+                android:layout_height="wrap_content"
+                android:drawableTop="@drawable/ic_volume_up_black"
+                android:text="@string/radio_button_left_5_text" />
+        </RadioGroup>
+
+        <LinearLayout
+            android:id="@+id/relative_surface"
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            android:layout_weight="3"
+            android:paddingBottom="8dp">
+
+            <SurfaceView
+                android:id="@+id/surface_main"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/ic_video_view_background" />
+
+        </LinearLayout>
+
+        <RadioGroup
+            android:id="@+id/radio_group_right"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_weight="5"
+            android:orientation="horizontal"
+            tools:ignore="UselessParent">
+
+            <RadioButton
+                android:id="@+id/radio_right_1"
+                style="@style/RadioButton"
+                android:layout_height="wrap_content"
+                android:drawableTop="@drawable/ic_fast_forward_black"
+                android:text="@string/radio_button_right_1_text" />
+
+            <RadioButton
+                android:id="@+id/radio_right_2"
+                style="@style/RadioButton"
+                android:layout_height="wrap_content"
+                android:drawableTop="@drawable/ic_queue_music_black"
+                android:text="@string/radio_button_right_2_text" />
+
+            <RadioButton
+                android:id="@+id/radio_right_3"
+                style="@style/RadioButton"
+                android:layout_height="wrap_content"
+                android:drawableTop="@drawable/ic_check_black"
+                android:text="@string/radio_button_right_3_text" />
+
+            <RadioButton
+                android:id="@+id/radio_right_4"
+                style="@style/RadioButton"
+                android:layout_height="wrap_content"
+                android:drawableTop="@drawable/ic_brightness_high_black"
+                android:text="@string/radio_button_right_4_text" />
+
+            <RadioButton
+                android:id="@+id/radio_right_5"
+                style="@style/RadioButton"
+                android:layout_height="wrap_content"
+                android:drawableTop="@drawable/ic_replay_black"
+                android:text="@string/radio_button_right_5_text" />
+        </RadioGroup>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_selected_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="785dp"
+        android:layout_marginRight="130dp"
+        android:layout_marginTop="48dp"
+        android:background="@drawable/ic_song_number"
+        android:text="20"
+        android:textColor="@color/colorBlue" />
+
+</FrameLayout>

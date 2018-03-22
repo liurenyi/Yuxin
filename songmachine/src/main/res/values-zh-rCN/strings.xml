@@ -1,0 +1,36 @@
+<resources>
+    <string name="app_name">Song Machine</string>
+    <string name="app_request_permission_hint">必须同意所请求的权限，App才可以正常使用</string>
+    <string name="radio_button_top_menu">调音</string>
+    <string name="radio_button_top_menu_1">设置</string>
+    <string name="radio_button_left_1_text">首页</string>
+    <string name="radio_button_left_2_text">重唱</string>
+    <string name="radio_button_left_3_text">静音</string>
+    <string name="radio_button_left_4_text">暂停</string>
+    <string name="radio_button_left_4_text_1">播放</string>
+    <string name="radio_button_left_5_text">音量</string>
+    <string name="radio_button_right_1_text">切歌</string>
+    <string name="radio_button_right_2_text">伴唱</string>
+    <string name="radio_button_right_3_text">已点</string>
+    <string name="radio_button_right_4_text">气氛</string>
+    <string name="radio_button_right_5_text">返回</string>
+    <string name="tv_songs_alter_text">没有已点歌曲了</string>
+    <string name="tv_menu_title_text">音效</string>
+    <string name="tv_menu_title_text_1">重低音</string>
+    <string name="tv_tuning_type_1">标准</string>
+    <string name="tv_tuning_type_2">经典</string>
+    <string name="tv_tuning_type_3">舞蹈</string>
+    <string name="tv_tuning_type_4">平音</string>
+    <string name="tv_tuning_type_5">民间</string>
+    <string name="tv_tuning_type_6">重金属</string>
+    <string name="tv_tuning_type_7">嘻哈</string>
+    <string name="tv_tuning_type_8">爵士</string>
+    <string name="tv_tuning_type_9">流行</string>
+    <string name="tv_tuning_type_10">摇滚</string>
+    <string name="ui_main_selected_song_info_text">当前歌曲:%1$s   下一首:%2$s</string>
+    <string name="ui_main_selected_song_info_text_1">当前歌曲:%1$s</string>
+    <string name="ui_main_volume_text">音量已经最小了</string>
+    <string name="ui_main_volume_text_1">音量异常</string>
+    <string name="ui_main_volume_text_2">音量已经最大了</string>
+    <string name="app_add_song_to_list">已添加成功</string>
+</resources>

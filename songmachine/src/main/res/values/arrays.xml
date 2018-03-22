@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="ReverbName">
+        <item>标准</item>
+        <item>经典</item>
+        <item>舞蹈</item>
+        <item>平音</item>
+        <item>民间</item>
+        <item>重金属</item>
+        <item>嘻哈</item>
+    </string-array>
+</resources>
