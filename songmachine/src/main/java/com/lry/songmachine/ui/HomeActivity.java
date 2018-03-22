@@ -59,6 +59,8 @@ import java.util.List;
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener, MediaPlayer.
         OnCompletionListener {
 
+    public static final String TAG = "HomeActivity";
+    public static final boolean DEBUG = true;
     public Context mContext = HomeActivity.this;
     public ViewSwitcher mViewSwitcher;
     public int currentPage = -1;
@@ -303,7 +305,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             public void addToList(String name, String path) {
                 VideoInfo info = new VideoInfo(name, path);
                 selectedVideos.add(info);
-                selectedNumber.setText(selectedVideos.size() + "");
+                selectedNumber.setText(selectedVideos.size());
                 Method.toast(mContext, getString(R.string.app_add_song_to_list));
             }
         });
@@ -347,7 +349,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             mPresetReverb.setEnabled(true); //开启预设音场控制器
             for (short i = 0; i < mEqualizer.getNumberOfPresets(); i++) {
                 // <-- Normal,Classical,Dance,Flat,Folk,Heavy Metal,Hip Hop,Jazz,Pop,Rock -->
-                String presetName = mEqualizer.getPresetName(i);
+                //String presetName = mEqualizer.getPresetName(i);
                 reverbNames.add(i);
             }
             String currentReverb = Method.getPrefValues(mContext, "currentReverb", null);
@@ -394,7 +396,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private void next() {
         if (currentPage < togglePage - 1) {
             currentPage++;
-            Log.e("liu", "当前第" + (currentPage + 1) + "页");
+            if (DEBUG) {
+                Log.e(TAG, "当前第" + (currentPage + 1) + "页");
+            }
             Method.setPrefValues(mContext, Utils.KEY_CURRENT_SCREEN, currentPage);
             ((GridView) mViewSwitcher.getNextView()).setAdapter(adapter);
             mViewSwitcher.setInAnimation(mContext, R.anim.slide_in_right);
@@ -406,7 +410,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private void prev() {
         if (currentPage > 0) {
             currentPage--;
-            Log.e("liu", "当前第" + (currentPage + 1) + "页");
+            if (DEBUG) {
+                Log.e(TAG, "当前第" + (currentPage + 1) + "页");
+            }
             Method.setPrefValues(mContext, Utils.KEY_CURRENT_SCREEN, currentPage);
             ((GridView) mViewSwitcher.getNextView()).setAdapter(adapter);
             mViewSwitcher.setInAnimation(mContext, R.anim.slide_in_left);
@@ -425,6 +431,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         }
         if (mEqualizer != null) {
             mEqualizer.release();
+        }
+        for (int i = 0; i < staticBands; i++) {
+            Method.setPrefValues(mContext, "bar" + i, 0);
         }
     }
 
@@ -512,7 +521,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     mPresetReverb.setPreset(reverbNames.get(0));
                     short preset = mPresetReverb.getPreset();
                     Method.setPrefValues(mContext, "currentReverb", preset + "");
-                    PresetReverb.Settings properties = mPresetReverb.getProperties();
                     tvPresetReverb.setText(stringArray[0]);
                 }
                 break;
@@ -520,7 +528,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 if (reverbNames.size() > 0) {
                     mPresetReverb.setPreset(reverbNames.get(1));
                     short preset = mPresetReverb.getPreset();
-                    PresetReverb.Settings properties = mPresetReverb.getProperties();
                     Method.setPrefValues(mContext, "currentReverb", preset + "");
                     tvPresetReverb.setText(stringArray[1]);
                 }
@@ -530,7 +537,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     mPresetReverb.setPreset(reverbNames.get(2));
                     short preset = mPresetReverb.getPreset();
                     Method.setPrefValues(mContext, "currentReverb", preset + "");
-                    PresetReverb.Settings properties = mPresetReverb.getProperties();
                     tvPresetReverb.setText(stringArray[2]);
                 }
                 break;
@@ -539,7 +545,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     mPresetReverb.setPreset(reverbNames.get(3));
                     short preset = mPresetReverb.getPreset();
                     Method.setPrefValues(mContext, "currentReverb", preset + "");
-                    PresetReverb.Settings properties = mPresetReverb.getProperties();
                     tvPresetReverb.setText(stringArray[3]);
                 }
                 break;
@@ -548,7 +553,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     mPresetReverb.setPreset(reverbNames.get(4));
                     short preset = mPresetReverb.getPreset();
                     Method.setPrefValues(mContext, "currentReverb", preset + "");
-                    PresetReverb.Settings properties = mPresetReverb.getProperties();
                     tvPresetReverb.setText(stringArray[4]);
                 }
                 break;
@@ -557,7 +561,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     mPresetReverb.setPreset(reverbNames.get(5));
                     short preset = mPresetReverb.getPreset();
                     Method.setPrefValues(mContext, "currentReverb", preset + "");
-                    PresetReverb.Settings properties = mPresetReverb.getProperties();
                     tvPresetReverb.setText(stringArray[5]);
                 }
                 break;
@@ -566,9 +569,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     mPresetReverb.setPreset(reverbNames.get(6));
                     short preset = mPresetReverb.getPreset();
                     Method.setPrefValues(mContext, "currentReverb", preset + "");
-                    PresetReverb.Settings properties = mPresetReverb.getProperties();
                     tvPresetReverb.setText(stringArray[6]);
-                    Log.e("liu", "preset: " + preset + " properties: " + properties);
                 }
                 break;
             case R.id.relative_surface: // 点击surfaceview触发全屏功能
@@ -579,7 +580,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     //更新图标的显示状态
     private void updateIconState(boolean b) {
-        mRadioButton3.setCompoundDrawablesWithIntrinsicBounds(null, b == true ? getResources().
+        mRadioButton3.setCompoundDrawablesWithIntrinsicBounds(null, b ? getResources().
                 getDrawable(R.drawable.ic_volume_up_black) : getResources().
                 getDrawable(R.drawable.ic_volume_off_black), null, null);
     }
@@ -629,7 +630,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         if (mMediaPlayer != null) {
             MediaPlayer.TrackInfo[] trackInfo = mMediaPlayer.getTrackInfo();
             if (trackInfo != null && trackInfo.length > 0) {
-                Log.e("liu", "TrackInfo length: " + trackInfo.length);
+                if (DEBUG) {
+                    Log.e(TAG, "TrackInfo length: " + trackInfo.length);
+                }
                 if (trackInfo.length >= 3) { // 如果大于等于3，则视频文件支持伴唱原唱功能
                     if (isYuanChang) {
                         mMediaPlayer.selectTrack(2); // 伴唱
@@ -792,7 +795,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         updateReverbState(currentReverb);
     }
 
+    public static int staticBands = 5;//默认5条seekbar
+
     // 创建均衡器可调节界面
+    @SuppressLint("SetTextI18n")
     private void createEqualizerLayout() {
         dialog = new Dialog(mContext, R.style.ActionSheetDialogStyle);
 
@@ -816,11 +822,15 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         // 获取均衡控制器支持最小值和最大值
         final short minEQLevel = mEqualizer.getBandLevelRange()[0];//第一个下标为最低的限度范围
         short maxEQLevel = mEqualizer.getBandLevelRange()[1];  // 第二个下标为最高的限度范围
-        Log.e("liu", "minEQLevel: " + minEQLevel + " maxEQLevel: " + maxEQLevel);
         // 获取均衡控制器支持的所有频率
         short bands = mEqualizer.getNumberOfBands();
-        Log.e("liu", "Equalizer bands is " + bands);
+        staticBands = bands;
+        if (DEBUG) {
+            Log.e("liu", "minEQLevel: " + minEQLevel + " maxEQLevel: " + maxEQLevel + " " +
+                    "Equalizer bands is " + bands);
+        }
         for (short i = 0; i < bands; i++) {
+
             TextView eqTextView = new TextView(mContext);
             // 创建一个TextView，用于显示频率
             eqTextView.setLayoutParams(new ViewGroup.LayoutParams(
@@ -828,13 +838,14 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     ViewGroup.LayoutParams.WRAP_CONTENT));
             eqTextView.setGravity(Gravity.CENTER_HORIZONTAL);
             // 设置该均衡控制器的频率
-            eqTextView.setText((mEqualizer.getCenterFreq(i) / 1000)
-                    + "Hz");
+            eqTextView.setText((mEqualizer.getCenterFreq(i) / 1000) + "Hz");
             eqTextView.setTextColor(Color.WHITE);
             mLinearLayout.addView(eqTextView);
+
             // 创建一个水平排列组件的LinearLayout
             LinearLayout tmpLayout = new LinearLayout(mContext);
             tmpLayout.setOrientation(LinearLayout.HORIZONTAL);
+
             // 创建显示均衡控制器最小值的TextView
             TextView minDbTextView = new TextView(mContext);
             minDbTextView.setLayoutParams(new ViewGroup.LayoutParams(
@@ -844,6 +855,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             minDbTextView.setText((minEQLevel / 100) + "dB");
             minDbTextView.setTextColor(Color.WHITE);
             // 创建显示均衡控制器最大值的TextView
+
             TextView maxDbTextView = new TextView(mContext);
             maxDbTextView.setLayoutParams(new ViewGroup.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -851,18 +863,22 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             // 显示均衡控制器的最大值
             maxDbTextView.setText((maxEQLevel / 100) + "dB");
             maxDbTextView.setTextColor(Color.WHITE);
+
             LinearLayout.LayoutParams layoutParams = new
                     LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT);
             layoutParams.weight = 1;
+
             // 定义SeekBar做为调整工具
             final SeekBar bar = new SeekBar(mContext);
             bar.setLayoutParams(layoutParams);
             bar.setMax(maxEQLevel - minEQLevel);
             //bar.setProgress(mEqualizer.getBandLevel(i));
+            int prefValues = Method.getPrefValues(mContext, "bar" + i, 0);
             //默认设置为0
-            bar.setProgress((maxEQLevel - minEQLevel) / 2);
+            //bar.setProgress((maxEQLevel - minEQLevel) / 2);
+            bar.setProgress(prefValues - minEQLevel);
             final short brand = i;
             // 为SeekBar的拖动事件设置事件监听器
             bar.setOnSeekBarChangeListener(new SeekBar
@@ -871,9 +887,12 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                     // 设置该频率的均衡值
                     mEqualizer.setBandLevel(brand, (short) (progress + minEQLevel));
-                    Log.e("liu", "brand " + brand + " EQLevel: " + (progress + minEQLevel));
+                    String barTag = "bar" + brand;
+                    int barValue = (progress + minEQLevel);
+                    Method.setPrefValues(mContext, barTag, barValue);
                     showTitle.setVisibility(View.VISIBLE);
                     showTitle.setText((progress + minEQLevel) / 100 + "dB");
+
                 }
 
                 @Override
@@ -931,7 +950,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     @SuppressLint("NewApi")
     @Override
     public void onCompletion(MediaPlayer mediaPlayer) {
-        Log.e("liu", "歌曲播放完成！");
+        Log.e(TAG, "歌曲播放完成！");
         release();
         if (selectedVideos.size() > 0) {
             cutSongs();
