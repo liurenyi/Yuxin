@@ -33,4 +33,5 @@
     <string name="ui_main_volume_text_1">音量异常</string>
     <string name="ui_main_volume_text_2">音量已经最大了</string>
     <string name="app_add_song_to_list">已添加成功</string>
+    <string name="app_textview_page_number">%1$d/%2$d</string>
 </resources>

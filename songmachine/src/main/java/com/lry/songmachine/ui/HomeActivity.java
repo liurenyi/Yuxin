@@ -1,6 +1,7 @@
 package com.lry.songmachine.ui;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -112,6 +113,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     public SeekBar seekBarBassBoost;
     public TextView tvPresetReverb;
 
+    public Button btnPrev, btnNext;
+    public TextView tvPageNumber;
+
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler() {
         @Override
@@ -130,6 +134,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
         videoInfos = WelcomeActivity.videoInfos;
         selectedVideos = WelcomeActivity.selectedVideos;//选中歌曲的数据集合
 
@@ -184,6 +189,12 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         mRadioButtonTuning = this.findViewById(R.id.radio_btn_tuning);
         mRadioButtonSetting.setOnClickListener(this);
         mRadioButtonTuning.setOnClickListener(this);
+
+        btnPrev = this.findViewById(R.id.btn_prev);
+        btnNext = this.findViewById(R.id.btn_next);
+        btnPrev.setOnClickListener(this);
+        btnNext.setOnClickListener(this);
+        tvPageNumber = this.findViewById(R.id.tv_page_number);
 
         int currentVolume = Method.getCurrentVolume(mContext);
         updateIconState(currentVolume > 0); //更新音量键的图标显示,如果音量不为0，显示正常图标
@@ -399,6 +410,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             if (DEBUG) {
                 Log.e(TAG, "当前第" + (currentPage + 1) + "页");
             }
+            tvPageNumber.setText(getString(R.string.app_textview_page_number, currentPage + 1, togglePage));
             Method.setPrefValues(mContext, Utils.KEY_CURRENT_SCREEN, currentPage);
             ((GridView) mViewSwitcher.getNextView()).setAdapter(adapter);
             mViewSwitcher.setInAnimation(mContext, R.anim.slide_in_right);
@@ -413,6 +425,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             if (DEBUG) {
                 Log.e(TAG, "当前第" + (currentPage + 1) + "页");
             }
+            tvPageNumber.setText(getString(R.string.app_textview_page_number, currentPage + 1, togglePage));
             Method.setPrefValues(mContext, Utils.KEY_CURRENT_SCREEN, currentPage);
             ((GridView) mViewSwitcher.getNextView()).setAdapter(adapter);
             mViewSwitcher.setInAnimation(mContext, R.anim.slide_in_left);
@@ -574,6 +587,12 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.relative_surface: // 点击surfaceview触发全屏功能
                 resetSize();
+                break;
+            case R.id.btn_next:
+                next();
+                break;
+            case R.id.btn_prev:
+                prev();
                 break;
         }
     }
@@ -964,6 +983,12 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 e.printStackTrace();
             }
         }
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        mGestureDetector.onTouchEvent(ev);
+        return super.dispatchTouchEvent(ev);
     }
 
     @Override

@@ -48,27 +48,6 @@ public class MyGestureDetector implements GestureDetector.OnGestureListener {
 
     @Override
     public boolean onScroll(MotionEvent motionEvent, MotionEvent motionEvent1, float v, float v1) {
-        Log.e(TAG, "--onScroll--");
-        /*float x = motionEvent.getX();
-        float y = motionEvent.getY();
-        float x1 = motionEvent1.getX();
-        float y1 = motionEvent1.getY();
-        Log.e(TAG, "X轴移速" + v);
-        if (x - x1 > 0) {
-            Log.e(TAG, "左滑");
-            *//*intent = new Intent(Constant.KEY_LEFT_SLIDE_ORDER);
-            mContext.sendBroadcast(intent);*//*
-            if (slideListener != null){
-                slideListener.LeftSlideListener();
-            }
-        } else if (x1 - x > 0) {
-            Log.e(TAG, "右滑");
-            *//*intent = new Intent(Constant.KEY_RIGHT_SLIDE_ORDER);
-            mContext.sendBroadcast(intent);*//*
-            if (slideListener!=null){
-                slideListener.RightSlideListener();
-            }
-        }*/
         return false;
     }
 
@@ -99,6 +78,6 @@ public class MyGestureDetector implements GestureDetector.OnGestureListener {
                 slideListener.RightSlideListener();
             }
         }
-        return false;
+        return true;
     }
 }
