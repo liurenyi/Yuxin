@@ -9,6 +9,8 @@ import android.view.MotionEvent;
 public class MyGestureDetector implements GestureDetector.OnGestureListener {
 
     public static final String TAG = "MyGestureDetector";
+    public static boolean isFling = true; //滑动的标志符，为解决gridview的左右滑动事件与点击事件的冲突
+    public boolean DEBUG = false;
 
     private Context mContext;
     private Intent intent;
@@ -31,18 +33,26 @@ public class MyGestureDetector implements GestureDetector.OnGestureListener {
 
     @Override
     public boolean onDown(MotionEvent motionEvent) {
-        Log.e(TAG, "--onDown--");
+        if (DEBUG) {
+            Log.e(TAG, "--onDown--");
+        }
+        isFling = false;
         return false;
     }
 
     @Override
     public void onShowPress(MotionEvent motionEvent) {
-        Log.e(TAG, "--onShowPress--");
+        if (DEBUG) {
+            Log.e(TAG, "--onShowPress--");
+        }
     }
 
     @Override
     public boolean onSingleTapUp(MotionEvent motionEvent) {
-        Log.e(TAG, "--onSingleTapUp--");
+        if (DEBUG) {
+            Log.e(TAG, "--onSingleTapUp--");
+        }
+        isFling = false;
         return false;
     }
 
@@ -64,7 +74,10 @@ public class MyGestureDetector implements GestureDetector.OnGestureListener {
      */
     @Override
     public boolean onFling(MotionEvent motionEvent, MotionEvent motionEvent1, float v, float v1) {
-        Log.e(TAG, "--onFling--");
+        if (DEBUG) {
+            Log.e(TAG, "--onFling--");
+        }
+        isFling = true;
         float x = motionEvent.getX();
         float y = motionEvent.getY();
         float x1 = motionEvent1.getX();
@@ -73,10 +86,12 @@ public class MyGestureDetector implements GestureDetector.OnGestureListener {
             if (slideListener != null) {
                 slideListener.LeftSlideListener();
             }
+            return true;
         } else if (x1 - x > 0) {
             if (slideListener != null) {
                 slideListener.RightSlideListener();
             }
+            return true;
         }
         return true;
     }

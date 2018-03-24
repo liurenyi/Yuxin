@@ -238,13 +238,13 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private void initTwoView() {
 
         mUIRelativeLayout = this.findViewById(R.id.relative_layout_ui);
-        mUIRelativeLayout.setOnTouchListener(new View.OnTouchListener() {
+        /*mUIRelativeLayout.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 mGestureDetector.onTouchEvent(motionEvent);
                 return true;
             }
-        });
+        });*/
 
         mViewSwitcher = this.findViewById(R.id.view_switcher);
         mViewSwitcher.setFactory(new ViewSwitcher.ViewFactory() {
@@ -261,10 +261,13 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 view.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                        prevVideoPath = videoInfos.get(currentPage * Utils.NUMBER_PER_SCREEN + i).getVideoPath();
-                        String name = videoInfos.get(currentPage * Utils.NUMBER_PER_SCREEN + i).getVideoName();
-                        Method.toast(mContext, name);
-                        checkAppPermission();
+                        if (!MyGestureDetector.isFling) { //isFling为false，表示执行了滑动事件，此时不响应点击事件
+                            Log.e(MyGestureDetector.TAG, "--onItemClick--");
+                            prevVideoPath = videoInfos.get(currentPage * Utils.NUMBER_PER_SCREEN + i).getVideoPath();
+                            String name = videoInfos.get(currentPage * Utils.NUMBER_PER_SCREEN + i).getVideoName();
+                            Method.toast(mContext, name);
+                            checkAppPermission();
+                        }
                     }
                 });
                 return view;
@@ -985,11 +988,11 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    @Override
+   /* @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         mGestureDetector.onTouchEvent(ev);
         return super.dispatchTouchEvent(ev);
-    }
+    }*/
 
     @Override
     protected void onDestroy() {
