@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.media.ThumbnailUtils;
 import android.os.Environment;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.view.WindowManager;
@@ -160,6 +161,11 @@ public class Method {
     // 格式化歌曲的名字，去掉后面的后缀
     private static String formatSongName(String name) {
         return name.contains(".") ? name.substring(0, name.indexOf(".")) : name;
+    }
+
+    // 获取当前时间点
+    public static long getCurrentTime() {
+        return SystemClock.elapsedRealtime();
     }
 
 }

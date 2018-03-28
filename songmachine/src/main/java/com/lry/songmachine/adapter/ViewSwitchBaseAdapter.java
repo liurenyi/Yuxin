@@ -97,6 +97,7 @@ public class ViewSwitchBaseAdapter extends BaseAdapter {
             public void onClick(View view) {
                 String name = videoInfos.get(i + i1 * Utils.NUMBER_PER_SCREEN).getVideoName();
                 String path = videoInfos.get(i + i1 * Utils.NUMBER_PER_SCREEN).getVideoPath();
+                Log.e("liu","selected name: " + name + " path: " + path);
                 if (onItemSelectedListener != null) {
                     onItemSelectedListener.addToList(name, path);
                 }

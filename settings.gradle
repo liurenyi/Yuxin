@@ -1,1 +1,1 @@
-include ':app', ':songmachine', ':twoscreen'
+include ':songmachine', ':twoscreen'

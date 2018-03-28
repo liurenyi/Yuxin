@@ -86,7 +86,7 @@ public class WelcomeActivity extends AppCompatActivity {
     }
 
     private void initRxJava() {
-        Log.e(TAG,"realtime 1 : " + SystemClock.elapsedRealtime());
+        Log.e(TAG, "realtime 1 : " + SystemClock.elapsedRealtime());
         if (videoInfos != null || selectedVideos != null) {
             videoInfos.clear();
             selectedVideos.clear();
@@ -100,7 +100,7 @@ public class WelcomeActivity extends AppCompatActivity {
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<File>() {
             @Override
             public void onCompleted() {
-                Log.e(TAG,"realtime 3 : " + SystemClock.elapsedRealtime());
+                Log.e(TAG, "realtime 3 : " + SystemClock.elapsedRealtime());
                 Log.e(TAG, "-->onCompleted()");
                 intent = new Intent();
                 intent.setClass(mContext, HomeActivity.class);
@@ -115,9 +115,10 @@ public class WelcomeActivity extends AppCompatActivity {
 
             @Override
             public void onNext(File file) {
-                Log.e(TAG,"realtime 2 : " + SystemClock.elapsedRealtime());
+                Log.e(TAG, "realtime 2 : " + SystemClock.elapsedRealtime());
                 String filename = Method.formatFileName(file.getName());
                 String filePath = file.getPath();
+                Log.e(TAG, "filePath: " + filePath);
                 VideoInfo info = new VideoInfo(filename, filePath);
                 videoInfos.add(info);
                 selectedVideos.add(info);

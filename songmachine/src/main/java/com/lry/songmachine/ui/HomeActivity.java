@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.hardware.display.DisplayManager;
 import android.media.MediaPlayer;
 import android.media.audiofx.BassBoost;
 import android.media.audiofx.Equalizer;
@@ -53,6 +54,7 @@ import com.lry.songmachine.util.Method;
 import com.lry.songmachine.util.MyGestureDetector;
 import com.lry.songmachine.util.Utils;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -70,6 +72,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     public MyGestureDetector myGestureDetector;
     public RelativeLayout mUIRelativeLayout;
     public LinearLayout relativeSurface;
+    public LinearLayout linearLayout;
     public RadioButton mRadioButton1;
     public RadioButton mRadioButton2;
     public RadioButton mRadioButton3;
@@ -116,6 +119,11 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     public Button btnPrev, btnNext;
     public TextView tvPageNumber;
 
+    // 关于双屏异显
+    public DisplayManager mDisplayManager;
+    public Display[] displays;
+    public DifferentDisplay mDifferentDisplay;
+
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler() {
         @Override
@@ -130,6 +138,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         }
     };
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -157,6 +166,16 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
         Method.setPrefValues(mContext, KEY_PLAY_MODE, KEY_PLAY_MODE_SMALL_VALUES); // 设置初始值，窗口的模式
 
+        /**--------------------双屏异显 start-------------------------**/
+        mDisplayManager = (DisplayManager) getSystemService(Context.DISPLAY_SERVICE);
+        displays = mDisplayManager.getDisplays();
+        Log.e(TAG, "displays: " + displays.length);
+        if (mDifferentDisplay == null && displays.length > 1) {
+            mDifferentDisplay = new DifferentDisplay(mContext, displays[displays.length - 1]);
+            mDifferentDisplay.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+            mDifferentDisplay.show();
+        }
+        /**--------------------双屏异显 end-------------------------**/
         initOneView();
         initTwoView();
         getTogglePage();
@@ -200,7 +219,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         updateIconState(currentVolume > 0); //更新音量键的图标显示,如果音量不为0，显示正常图标
 
         selectedNumber = this.findViewById(R.id.tv_selected_number);
-        selectedNumber.setText(selectedVideos.size() + "");
+        selectedNumber.setText(String.valueOf(selectedVideos.size()));
         selectedInfo = this.findViewById(R.id.tv_selected_song_info); // 跑马灯效果的textview
         selectedInfo.setSelected(true); // 开启跑马灯效
 
@@ -210,6 +229,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         relativeSurface.setOnClickListener(this);
         radioGroupLeft = this.findViewById(R.id.radio_group_left);
         radioGroupRight = this.findViewById(R.id.radio_group_right);
+
+        linearLayout = this.findViewById(R.id.linearLayout);
 
         surfaceViewMain = this.findViewById(R.id.surface_main);
         surfaceViewMain.setKeepScreenOn(true);
@@ -248,6 +269,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
         mViewSwitcher = this.findViewById(R.id.view_switcher);
         mViewSwitcher.setFactory(new ViewSwitcher.ViewFactory() {
+            @SuppressLint("ClickableViewAccessibility")
             @Override
             public View makeView() {
                 GridView view = (GridView) getLayoutInflater().inflate(R.layout.slide_gridview, null);
@@ -319,7 +341,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             public void addToList(String name, String path) {
                 VideoInfo info = new VideoInfo(name, path);
                 selectedVideos.add(info);
-                selectedNumber.setText(selectedVideos.size());
+                selectedNumber.setText(String.valueOf(selectedVideos.size())); //只能传入string型，传入int型会报错
                 Method.toast(mContext, getString(R.string.app_add_song_to_list));
             }
         });
@@ -328,16 +350,26 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     // 开始播放默认的歌曲
     private void PlayDefaultVideo() {
-        final Uri uri = Uri.parse("/storage/emulated/0/Movies/烟花易冷.mp4"); // 测试路径
+        String defaultUri = "/storage/emulated/0/Movies/烟花易冷.mp4";
+        File file = new File(defaultUri);
+        if (!file.exists()) {
+            if (videoInfos.size() > 0) {
+                defaultUri = videoInfos.get(0).getVideoPath();
+            } else {
+                Log.e(TAG, "没有视频可播放");
+            }
+        }
         try {
             mMediaPlayer.reset();
-            mMediaPlayer.setDataSource(uri.toString());
-            curPlaySong = uri.toString();
+            mMediaPlayer.setDataSource(defaultUri);
+            curPlaySong = defaultUri;
             mMediaPlayer.prepare();
             mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                @SuppressLint("StringFormatMatches")
+                @SuppressLint({"StringFormatMatches", "NewApi"})
                 @Override
                 public void onPrepared(MediaPlayer mediaPlayer) {
+                    //副屏播放在前面可减少主副屏之间的误差
+                    mDifferentDisplay.startPlayVideo(curPlaySong); //开启副屏播放
                     mMediaPlayer.start();
                     setupPresetReverb(mMediaPlayer);
                     setupBassBoost(mMediaPlayer);
@@ -418,6 +450,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             ((GridView) mViewSwitcher.getNextView()).setAdapter(adapter);
             mViewSwitcher.setInAnimation(mContext, R.anim.slide_in_right);
             mViewSwitcher.setOutAnimation(mContext, R.anim.slide_out_left);
+
             mViewSwitcher.showNext();
         }
     }
@@ -453,6 +486,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    @SuppressLint("NewApi")
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public void onClick(View view) {
@@ -476,16 +510,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 break;
             case R.id.radio_left_4:
-                if (mMediaPlayer.isPlaying()) {
-                    mMediaPlayer.pause();
-                } else {
-                    mMediaPlayer.start();
-                }
-                mRadioButton4.setCompoundDrawablesWithIntrinsicBounds(null,
-                        mMediaPlayer.isPlaying() ? getResources().getDrawable(R.drawable.ic_pause_circle_filled_black) :
-                                getResources().getDrawable(R.drawable.ic_play_arrow_black), null, null);
-                mRadioButton4.setText(mMediaPlayer.isPlaying() ? getResources().getString(R.string.radio_button_left_4_text_1) :
-                        getResources().getString(R.string.radio_button_left_4_text));
+                pauseAndPlay();
                 break;
             case R.id.radio_left_5:
                 adjustVolumeLayout();
@@ -608,10 +633,30 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     //重唱
+    @SuppressLint("NewApi")
     private void Replay() {
+        mDifferentDisplay.Replay(); // 副屏也同时执行重唱功能
         if (mMediaPlayer != null) {
             mMediaPlayer.seekTo(0);
         }
+    }
+
+    //暂停,播放视频
+    @SuppressLint("NewApi")
+    private void pauseAndPlay() {
+        if (mMediaPlayer.isPlaying()) {
+            int position = mMediaPlayer.getCurrentPosition();
+            mMediaPlayer.pause();
+            mDifferentDisplay.pause(position);
+        } else {
+            mMediaPlayer.start();
+            mDifferentDisplay.play(mMediaPlayer.getCurrentPosition());
+        }
+        mRadioButton4.setCompoundDrawablesWithIntrinsicBounds(null,
+                mMediaPlayer.isPlaying() ? getResources().getDrawable(R.drawable.ic_pause_circle_filled_black) :
+                        getResources().getDrawable(R.drawable.ic_play_arrow_black), null, null);
+        mRadioButton4.setText(mMediaPlayer.isPlaying() ? getResources().getString(R.string.radio_button_left_4_text_1) :
+                getResources().getString(R.string.radio_button_left_4_text));
     }
 
     private String curPlaySong = null;
@@ -628,7 +673,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 mMediaPlayer.setDataSource(path);
                 curPlaySong = path;
                 mMediaPlayer.prepare();
-                mMediaPlayer.start();
+                //mMediaPlayer.start();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -638,7 +683,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     getDrawable(R.drawable.ic_pause_circle_filled_black), null, null);
             mRadioButton4.setText(getResources().getString(R.string.radio_button_left_4_text));
             selectedVideos.remove(0);
-            selectedNumber.setText(selectedVideos.size() + "");
+            selectedNumber.setText(String.valueOf(selectedVideos.size()));
         } else {
             Method.toast(mContext, getString(R.string.tv_songs_alter_text));
         }
@@ -752,6 +797,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             radioGroupRight.setVisibility(View.GONE);
             radioGroupLeft.setVisibility(View.GONE);
             selectedNumber.setVisibility(View.GONE);
+            linearLayout.setVisibility(View.GONE);
             Method.setPrefValues(mContext, KEY_PLAY_MODE, KEY_PLAY_MODE_FULL_VALUES);
         } else if (values != null && values.equals(KEY_PLAY_MODE_FULL_VALUES)) {
             // 443,200,测量小窗口模式，控件的宽高。
@@ -763,6 +809,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             radioGroupLeft.setVisibility(View.VISIBLE);
             radioGroupRight.setVisibility(View.VISIBLE);
             selectedNumber.setVisibility(View.VISIBLE);
+            linearLayout.setVisibility(View.VISIBLE);
             Method.setPrefValues(mContext, KEY_PLAY_MODE, KEY_PLAY_MODE_SMALL_VALUES);
         }
     }
